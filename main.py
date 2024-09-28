@@ -4,10 +4,15 @@ import os
 import lrcGet
 
 def manage_folder_tags(folder_path):
+    print("Processing folder:", folder_path)
+    if not os.path.exists(folder_path):
+        print("The specified folder does not exist.")
+        return
     for root, dirs, files in os.walk(folder_path):
         for file in files:
             if file.endswith('.mp3'):
                 file_path = os.path.join(root, file)
+                print(f"Found MP3 file: {file_path}")
                 manage_tags(file_path)
 
 def manage_tags(file_path):
