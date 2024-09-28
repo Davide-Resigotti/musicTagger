@@ -205,7 +205,7 @@ def print_lyrics(file_path):
 
 
 if __name__ == "__main__":
-    folder_path = "/Users/davideresigotti/Downloads/Dolce vita"
+    folder_path = "/home/davide/newMusic/Shiva/Milano Angels"
   
     manage_folder_tags(folder_path)
     # print_tags('/Users/davideresigotti/Downloads/Going Hard 2/7 Am.mp3')
