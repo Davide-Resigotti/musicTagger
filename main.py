@@ -151,15 +151,15 @@ def manage_tags(file_path):
     
     lyrics = lrcGet.get_lyrics(artist[0], title, album[0], duration)
     if lyrics is None:
-        new_title = re.sub(r'\(feat\..*', "", title)
-        lyrics = lrcGet.get_lyrics(artist[0], new_title, album[0], duration)
+        new_title1 = re.sub(r'\(feat\..*', "", title)
+        lyrics = lrcGet.get_lyrics(artist[0], new_title1, album[0], duration)
     
     if lyrics is not None:
         if firts_lyrics != lyrics:
             audio['USLT'] = USLT(encoding=3, text=lyrics)
 
 
-    
+
   
     print()
     print("-----------------------------")
@@ -205,7 +205,7 @@ def print_lyrics(file_path):
 
 
 if __name__ == "__main__":
-    folder_path = "/Users/davideresigotti/Downloads/Going Hard 2"
+    folder_path = "/Users/davideresigotti/Downloads/Going Hard"
   
     manage_folder_tags(folder_path)
     # print_tags('/Users/davideresigotti/Downloads/Going Hard 2/7 Am.mp3')
