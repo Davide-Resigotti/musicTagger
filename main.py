@@ -1,7 +1,11 @@
-from mutagen.id3 import ID3, TIT2, TPE1, TALB, TPE2, TXXX, TRCK, USLT
+from mutagen.id3 import ID3, TIT2, TPE1, TALB, TPE2, TXXX, TRCK, USLT, TCOM
 import re
 import os
 import lrcGet
+
+
+
+
 
 def manage_folder_tags(folder_path):
     print("Processing folder:", folder_path)
@@ -60,11 +64,25 @@ def manage_tags(file_path):
     print(f"Artisti: {artists.text}") if artists else None
     print()
     
-    
     # ------------------- EDIT TAGS -------------------
-    if artists is not None:
+    
+    # artists that are considered as double artist
+    double_artist = ["Glocky & Faneto", "SadTurs & KIID", "Rayan & Intifaya" ]
+    
+    if artists is not None :
+        if artist[0] in double_artist:
+            principal_artist = artist[0]
+            artists_list = []
+            
+        elif artist[0] == "Rayan" or artist[0] == "Intifaya":
+            principal_artist = "Rayan & Intifaya"
+            artists_list = []
+        else:
+            principal_artist = artists[0]
+        
         artists_list = ', '.join(artists).split(', ')
-        principal_artist = artists[0]
+        print(principal_artist)
+
     else:
         if isinstance(artist, list):
             principal_artist = artist[0]
@@ -76,34 +94,55 @@ def manage_tags(file_path):
             else:
                 principal_artist = artist
                 artists_list = []
+    
+    # Remove SadTurs and KIID from the artists 
+    if principal_artist == "SadTurs & KIID":
+        if "SadTurs" in artists_list:
+            artists_list.remove("SadTurs")
+            audio['TCOM'] = TCOM(encoding=3, text="SadTurs")
+        if "KIID" in artists_list:
+            artists_list.remove("KIID")
+            audio['TCOM'] = TCOM(encoding=3, text="KIID")
             
-    # print()
-    # print(f"Artists: {artists_list}")
-    # print()
-            
+
+
+        
     # Remove the main artist from the list of featured artists
     if principal_artist in artists_list:
         artists_list.remove(principal_artist)
-        
-    # Create a string with the list of featured artists
-    feat_artists = ' & '.join(artists_list)
+            
+    
+    producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore"]
+
+    # Create a string with the list of featured artists, excluding double artists
+    feat_artists = ', '.join([item for item in artists_list if item not in producers])
+    
+       
+    print()
+    print(f"featured : {feat_artists}")
+    print()
     
     print("EDITED TAGS")
     
     # TITLE
     # Check if feat artists are set, if not set it to the list of featured artists
+    
     title = title[0]
-    if "feat" not in title and len(artists_list) > 0:
+    if "feat" not in title and len(artists_list) > 0 and feat_artists != "":
         new_title = f"{title} (feat. {feat_artists})"
         # print("feat not in title")
-    elif "(feat." in title and len(artists_list) > 0:
+    elif "(feat." in title and len(artists_list) > 0 and feat_artists != "":
         new_title = re.sub(r'\(feat\..*', f"(feat. {feat_artists})", title)
         # print("(feat in title")
-    elif "feat." in title and len(artists_list) > 0:
+    elif "feat." in title and len(artists_list) > 0 and feat_artists != "":
         new_title = re.sub(r'\feat\..*', f"(feat. {feat_artists})", title)
         # print("feat. in title")
     else:
         new_title = title
+        
+    # Remove the (prod. ...) and (official video) from the title
+    new_title = re.sub(r'\(prod\..*?\)|\(official video\)', "", new_title, flags=re.IGNORECASE).strip()
+
 
     # Update the title tag
     if title != new_title:
@@ -210,9 +249,9 @@ def print_lyrics(file_path):
 
 
 if __name__ == "__main__":
-    folder_path = "/home/davide/newMusic/Shiva/Milano Angels"
+    folder_path = '/Users/davideresigotti/Downloads/a'
   
     manage_folder_tags(folder_path)
-    # print_tags('/Users/davideresigotti/Downloads/Going Hard 2/7 Am.mp3')
-    # print_lyrics('/Users/davideresigotti/Downloads/Going Hard 2/7 Am.mp3')
+    # print_tags('/Users/davideresigotti/Downloads/NO REGULAR MUSIC (Deluxe)/CD2/05 - HORSE DANCE (feat. Yung Snapp, DrefGold, Side Baby).mp3')
+    # print_lyrics('/Users/davideresigotti/Downloads/SadTurs & KIID.mp3')
 
