@@ -49,8 +49,6 @@ def manage_tags(file_path):
         print("no artist or title")
         return
     
-    # Get the first title to compare to album name to check if it's a single
-    first_title = title[0] if title else None
     
     # Get the first artist to compare to artist
     first_artists = artists if artists else None
@@ -62,6 +60,7 @@ def manage_tags(file_path):
     print(f"Album Artist: {albumArtist}") if albumArtist else None
     print(f"Durata: {duration}") if duration else None  
     print(f"Artisti: {artists.text}") if artists else None
+    print(f"Track Number: {track_number}") if track_number else None
     print()
     
     # ------------------- EDIT TAGS -------------------
@@ -112,7 +111,7 @@ def manage_tags(file_path):
         artists_list.remove(principal_artist)
             
     
-    producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore"]
+    producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore", "Ddusi", "ilovethisbeat"]
 
     # Create a string with the list of featured artists, excluding double artists
     feat_artists = ', '.join([item for item in artists_list if item not in producers])
@@ -157,7 +156,7 @@ def manage_tags(file_path):
         
     #ALBUM
     # Chek if the track is a single, if so set the album name to singles
-    if first_title == album:
+    if track_number == '1/1' or track_number == '1':
         audio['TALB'] = TALB(encoding=3, text='singles')
         album = 'singles'
         print("Album impostato a singles")
@@ -249,9 +248,9 @@ def print_lyrics(file_path):
 
 
 if __name__ == "__main__":
-    folder_path = '/Users/davideresigotti/Downloads/a'
+    folder_path = '/Users/davideresigotti/Downloads'
   
     manage_folder_tags(folder_path)
-    # print_tags('/Users/davideresigotti/Downloads/NO REGULAR MUSIC (Deluxe)/CD2/05 - HORSE DANCE (feat. Yung Snapp, DrefGold, Side Baby).mp3')
+    # print_tags('/Users/davideresigotti/Downloads/DANIEL.mp3')
     # print_lyrics('/Users/davideresigotti/Downloads/SadTurs & KIID.mp3')
 
