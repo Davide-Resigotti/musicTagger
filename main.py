@@ -1,13 +1,22 @@
-from mutagen.id3 import ID3, TIT2, TPE1, TALB, TPE2, TXXX, TRCK, USLT
+from mutagen.id3 import ID3, TIT2, TPE1, TALB, TPE2, TXXX, TRCK, USLT, TCOM
 import re
 import os
 import lrcGet
 
+
+
+
+
 def manage_folder_tags(folder_path):
+    print("Processing folder:", folder_path)
+    if not os.path.exists(folder_path):
+        print("The specified folder does not exist.")
+        return
     for root, dirs, files in os.walk(folder_path):
         for file in files:
             if file.endswith('.mp3'):
                 file_path = os.path.join(root, file)
+                print(f"Found MP3 file: {file_path}")
                 manage_tags(file_path)
 
 def manage_tags(file_path):
@@ -40,8 +49,6 @@ def manage_tags(file_path):
         print("no artist or title")
         return
     
-    # Get the first title to compare to album name to check if it's a single
-    first_title = title[0] if title else None
     
     # Get the first artist to compare to artist
     first_artists = artists if artists else None
@@ -53,13 +60,28 @@ def manage_tags(file_path):
     print(f"Album Artist: {albumArtist}") if albumArtist else None
     print(f"Durata: {duration}") if duration else None  
     print(f"Artisti: {artists.text}") if artists else None
+    print(f"Track Number: {track_number}") if track_number else None
     print()
     
-    
     # ------------------- EDIT TAGS -------------------
-    if artists is not None:
+    
+    # artists that are considered as double artist
+    double_artist = ["Glocky & Faneto", "SadTurs & KIID", "Rayan & Intifaya" ]
+    
+    if artists is not None :
+        if artist[0] in double_artist:
+            principal_artist = artist[0]
+            artists_list = []
+            
+        elif artist[0] == "Rayan" or artist[0] == "Intifaya":
+            principal_artist = "Rayan & Intifaya"
+            artists_list = []
+        else:
+            principal_artist = artists[0]
+        
         artists_list = ', '.join(artists).split(', ')
-        principal_artist = artists[0]
+        print(principal_artist)
+
     else:
         if isinstance(artist, list):
             principal_artist = artist[0]
@@ -71,34 +93,62 @@ def manage_tags(file_path):
             else:
                 principal_artist = artist
                 artists_list = []
+    
+    # Remove SadTurs and KIID from the artists 
+    if principal_artist == "SadTurs & KIID":
+        if "SadTurs" in artists_list:
+            artists_list.remove("SadTurs")
+            audio['TCOM'] = TCOM(encoding=3, text="SadTurs")
+        if "KIID" in artists_list:
+            artists_list.remove("KIID")
+            audio['TCOM'] = TCOM(encoding=3, text="KIID")
             
-    # print()
-    # print(f"Artists: {artists_list}")
-    # print()
-            
+
+ 
+        
     # Remove the main artist from the list of featured artists
     if principal_artist in artists_list:
         artists_list.remove(principal_artist)
-        
-    # Create a string with the list of featured artists
-    feat_artists = ' & '.join(artists_list)
+            
+    
+    producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore", "Ddusi", "ilovethisbeat", "Wairaki"]
+
+    # Create a string with the list of featured artists, excluding double artists
+    feat_artists = ' & '.join([item for item in artists_list if item not in producers])
+    
+       
+    print()
+    print(f"featured : {feat_artists}")
+    print()
     
     print("EDITED TAGS")
     
     # TITLE
     # Check if feat artists are set, if not set it to the list of featured artists
+    
     title = title[0]
-    if "feat" not in title and len(artists_list) > 0:
+    if "feat" not in title and len(artists_list) > 0 and feat_artists != "":
         new_title = f"{title} (feat. {feat_artists})"
         # print("feat not in title")
-    elif "(feat." in title and len(artists_list) > 0:
+    elif "(feat." in title and len(artists_list) > 0 and feat_artists != "":
         new_title = re.sub(r'\(feat\..*', f"(feat. {feat_artists})", title)
         # print("(feat in title")
-    elif "feat." in title and len(artists_list) > 0:
+    elif "feat." in title and len(artists_list) > 0 and feat_artists != "":
         new_title = re.sub(r'\feat\..*', f"(feat. {feat_artists})", title)
         # print("feat. in title")
     else:
         new_title = title
+        
+        
+    if principal_artist in double_artist:
+        new_title = re.sub(f"(feat. {principal_artist})", "", new_title, flags=re.IGNORECASE).strip()
+    
+        
+    # Remove the (prod. ...) and (official video) from the title
+    new_title = re.sub(r'\(prod\..*?\)|\(official video\)', "", new_title, flags=re.IGNORECASE).strip()
+
+    
+
 
     # Update the title tag
     if title != new_title:
@@ -113,7 +163,7 @@ def manage_tags(file_path):
         
     #ALBUM
     # Chek if the track is a single, if so set the album name to singles
-    if first_title == album:
+    if track_number == '1/1' or track_number == '1':
         audio['TALB'] = TALB(encoding=3, text='singles')
         album = 'singles'
         print("Album impostato a singles")
@@ -205,9 +255,9 @@ def print_lyrics(file_path):
 
 
 if __name__ == "__main__":
-    folder_path = "/home/davide/newMusic/Shiva/Milano Angels"
+    folder_path = '/home/davide/newMusic'
   
     manage_folder_tags(folder_path)
-    # print_tags('/Users/davideresigotti/Downloads/Going Hard 2/7 Am.mp3')
-    # print_lyrics('/Users/davideresigotti/Downloads/Going Hard 2/7 Am.mp3')
+    # print_tags('/Users/davideresigotti/Downloads/DANIEL.mp3')
+    # print_lyrics('/Users/davideresigotti/Downloads/SadTurs & KIID.mp3')
 
