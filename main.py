@@ -140,8 +140,9 @@ def manage_tags(file_path):
         new_title = title
         
         
+    #if principal artist is in the double artist list remove it from the title (ES. Rayan & Intifaya)
     if principal_artist in double_artist:
-        new_title = re.sub(f"(feat. {principal_artist})", "", new_title, flags=re.IGNORECASE).strip()
+        new_title = re.sub(f"(feat. {principal_artist})", "", title, flags=re.IGNORECASE).strip()
     
         
     # Remove the (prod. ...) and (official video) from the title
@@ -255,7 +256,7 @@ def print_lyrics(file_path):
 
 
 if __name__ == "__main__":
-    folder_path = '/home/davide/newMusic'
+    folder_path = '/Users/davideresigotti/Downloads'
   
     manage_folder_tags(folder_path)
     # print_tags('/Users/davideresigotti/Downloads/DANIEL.mp3')
