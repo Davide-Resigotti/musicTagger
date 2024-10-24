@@ -104,14 +104,14 @@ def manage_tags(file_path):
             audio['TCOM'] = TCOM(encoding=3, text="KIID")
             
 
-
+ 
         
     # Remove the main artist from the list of featured artists
     if principal_artist in artists_list:
         artists_list.remove(principal_artist)
             
     
-    producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore", "Ddusi", "ilovethisbeat"]
+    producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore", "Ddusi", "ilovethisbeat", "Wairaki"]
 
     # Create a string with the list of featured artists, excluding double artists
     feat_artists = ', '.join([item for item in artists_list if item not in producers])
@@ -139,8 +139,15 @@ def manage_tags(file_path):
     else:
         new_title = title
         
+        
+    if principal_artist in double_artist:
+        new_title = re.sub(f"(feat. {principal_artist})", "", new_title, flags=re.IGNORECASE).strip()
+    
+        
     # Remove the (prod. ...) and (official video) from the title
     new_title = re.sub(r'\(prod\..*?\)|\(official video\)', "", new_title, flags=re.IGNORECASE).strip()
+
+    
 
 
     # Update the title tag
@@ -208,7 +215,7 @@ def manage_tags(file_path):
     print("-----------------------------")
     print() 
         
-    audio.save()
+    # audio.save()
     
     # Update the file name with the new title if it isn't already correct
     new_file_name = re.sub(r'.*\.mp3$', f"{new_title}.mp3", os.path.basename(file_path))
