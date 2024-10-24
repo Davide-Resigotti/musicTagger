@@ -114,7 +114,7 @@ def manage_tags(file_path):
     producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore", "Ddusi", "ilovethisbeat", "Wairaki"]
 
     # Create a string with the list of featured artists, excluding double artists
-    feat_artists = ', '.join([item for item in artists_list if item not in producers])
+    feat_artists = ' & '.join([item for item in artists_list if item not in producers])
     
        
     print()
@@ -255,7 +255,7 @@ def print_lyrics(file_path):
 
 
 if __name__ == "__main__":
-    folder_path = '/Users/davideresigotti/Downloads'
+    folder_path = '/home/davide/newMusic'
   
     manage_folder_tags(folder_path)
     # print_tags('/Users/davideresigotti/Downloads/DANIEL.mp3')
