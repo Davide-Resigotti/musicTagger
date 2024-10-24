@@ -196,14 +196,13 @@ def manage_tags(file_path):
         audio.delall('TPOS')
         
 
-    # download lyrics
+    # DOWNLOAD lyrics
+    
+    # check if the lyrics are already in the file
     firts_lyrics = audio.getall('USLT')[0].text if audio.getall('USLT') else None
     
     
     lyrics = lrcGet.get_lyrics(artist[0], title, album[0], duration)
-    if lyrics is None:
-        new_title1 = re.sub(r'\(feat\..*', "", title)
-        lyrics = lrcGet.get_lyrics(artist[0], new_title1, album[0], duration)
     
     if lyrics is not None:
         if firts_lyrics != lyrics:
