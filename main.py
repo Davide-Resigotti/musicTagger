@@ -140,8 +140,9 @@ def manage_tags(file_path):
         new_title = title
         
         
+    #if principal artist is in the double artist list remove it from the title (ES. Rayan & Intifaya)
     if principal_artist in double_artist:
-        new_title = re.sub(f"(feat. {principal_artist})", "", new_title, flags=re.IGNORECASE).strip()
+        new_title = re.sub(f"(feat. {principal_artist})", "", title, flags=re.IGNORECASE).strip()
     
         
     # Remove the (prod. ...) and (official video) from the title
@@ -195,14 +196,13 @@ def manage_tags(file_path):
         audio.delall('TPOS')
         
 
-    # download lyrics
+    # DOWNLOAD lyrics
+    
+    # check if the lyrics are already in the file
     firts_lyrics = audio.getall('USLT')[0].text if audio.getall('USLT') else None
     
     
     lyrics = lrcGet.get_lyrics(artist[0], title, album[0], duration)
-    if lyrics is None:
-        new_title1 = re.sub(r'\(feat\..*', "", title)
-        lyrics = lrcGet.get_lyrics(artist[0], new_title1, album[0], duration)
     
     if lyrics is not None:
         if firts_lyrics != lyrics:
@@ -215,7 +215,7 @@ def manage_tags(file_path):
     print("-----------------------------")
     print() 
         
-    audio.save()
+    # audio.save()
     
     # Update the file name with the new title if it isn't already correct
     new_file_name = re.sub(r'.*\.mp3$', f"{new_title}.mp3", os.path.basename(file_path))
@@ -255,7 +255,7 @@ def print_lyrics(file_path):
 
 
 if __name__ == "__main__":
-    folder_path = '/home/davide/newMusic'
+    folder_path = '/Users/davideresigotti/Downloads'
   
     manage_folder_tags(folder_path)
     # print_tags('/Users/davideresigotti/Downloads/DANIEL.mp3')
