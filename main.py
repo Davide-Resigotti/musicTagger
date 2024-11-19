@@ -1,3 +1,4 @@
+import time
 from mutagen.id3 import ID3, TIT2, TPE1, TALB, TPE2, TXXX, TRCK, USLT, TCOM
 import re
 import os
@@ -14,10 +15,13 @@ def manage_folder_tags(folder_path):
         return
     for root, dirs, files in os.walk(folder_path):
         for file in files:
-            if file.endswith('.mp3'):
+            #if file is an mp3 file and was created more than 24 hours ago
+            if file.endswith('.mp3') and os.path.getctime(os.path.join(root, file)) <= (time.time() - 86400):
                 file_path = os.path.join(root, file)
                 print(f"Found MP3 file: {file_path}")
                 manage_tags(file_path)
+            else:
+                print(f"File {file} is not an MP3 file or was created less than 24 hours ago.")
 
 def manage_tags(file_path):
     
@@ -66,21 +70,29 @@ def manage_tags(file_path):
     # ------------------- EDIT TAGS -------------------
     
     # artists that are considered as double artist
-    double_artist = ["Glocky & Faneto", "SadTurs & KIID", "Rayan & Intifaya" ]
+    double_artist = ["Glocky & Faneto", "SadTurs & KIID", "Rayan & Intifaya", "Intifaya & Rayan"]
+    
+    
+    
     
     if artists is not None :
-        if artist[0] in double_artist:
+        
+        if artist[0] in double_artist and artist[0] == albumArtist[0]:
             principal_artist = artist[0]
             artists_list = []
             
+        # if miss one of two in the artist
         elif artist[0] == "Rayan" or artist[0] == "Intifaya":
             principal_artist = "Rayan & Intifaya"
+            
             artists_list = []
         else:
             principal_artist = artists[0]
+            
         
         artists_list = ', '.join(artists).split(', ')
-        print(principal_artist)
+        
+
 
     else:
         if isinstance(artist, list):
@@ -104,17 +116,25 @@ def manage_tags(file_path):
             audio['TCOM'] = TCOM(encoding=3, text="KIID")
             
 
- 
-        
-    # Remove the main artist from the list of featured artists
-    if principal_artist in artists_list:
-        artists_list.remove(principal_artist)
             
     
     producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore", "Ddusi", "ilovethisbeat", "Wairaki"]
 
     # Create a string with the list of featured artists, excluding double artists
     feat_artists = ' & '.join([item for item in artists_list if item not in producers])
+    
+
+        
+    # Remove the main artist from the list of featured artists and spaces and &
+    if principal_artist in feat_artists:
+        feat_artists = re.sub(r'\s*&?\s*' + re.escape(principal_artist) + r'\s*&?\s*', '', feat_artists).strip()
+        
+    # Works only with Rayan & Intifaya    
+    if principal_artist == "Rayan & Intifaya" or albumArtist == "Rayan & Intifaya":
+        feat_artists = re.sub(r'\s*&?\s*' + re.escape("Rayan & Intifaya") + r'\s*&?\s*', '', feat_artists).strip()
+        feat_artists = re.sub(r'\s*&?\s*' + re.escape("Intifaya & Rayan") + r'\s*&?\s*', '', feat_artists).strip()
+        
+
     
        
     print()
@@ -125,6 +145,7 @@ def manage_tags(file_path):
     
     # TITLE
     # Check if feat artists are set, if not set it to the list of featured artists
+    
     
     title = title[0]
     if "feat" not in title and len(artists_list) > 0 and feat_artists != "":
@@ -138,17 +159,18 @@ def manage_tags(file_path):
         # print("feat. in title")
     else:
         new_title = title
+      
         
         
-    #if principal artist is in the double artist list remove it from the title (ES. Rayan & Intifaya)
-    if principal_artist in double_artist:
-        new_title = re.sub(f"(feat. {principal_artist})", "", title, flags=re.IGNORECASE).strip()
+        
     
         
     # Remove the (prod. ...) and (official video) from the title
     new_title = re.sub(r'\(prod\..*?\)|\(official video\)', "", new_title, flags=re.IGNORECASE).strip()
-
     
+    # Remove all (feat. ...) from the new title
+    # new_title = re.sub(r'\(feat\..*?\)', "", new_title, flags=re.IGNORECASE).strip()
+
 
 
     # Update the title tag
@@ -202,7 +224,7 @@ def manage_tags(file_path):
     firts_lyrics = audio.getall('USLT')[0].text if audio.getall('USLT') else None
     
     
-    lyrics = lrcGet.get_lyrics(artist[0], title, album[0], duration)
+    lyrics = lrcGet.get_lyrics(principal_artist, new_title, album[0], duration)
     
     if lyrics is not None:
         if firts_lyrics != lyrics:
@@ -214,8 +236,9 @@ def manage_tags(file_path):
     print()
     print("-----------------------------")
     print() 
+    
         
-    # audio.save()
+    audio.save() 
     
     # Update the file name with the new title if it isn't already correct
     new_file_name = re.sub(r'.*\.mp3$', f"{new_title}.mp3", os.path.basename(file_path))
@@ -254,8 +277,10 @@ def print_lyrics(file_path):
         
 
 
+
+
 if __name__ == "__main__":
-    folder_path = '/Users/davideresigotti/Downloads'
+    folder_path = '/home/davide/newMusic'
   
     manage_folder_tags(folder_path)
     # print_tags('/Users/davideresigotti/Downloads/DANIEL.mp3')
