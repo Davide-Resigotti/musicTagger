@@ -150,13 +150,13 @@ def manage_tags(file_path):
     title = title[0]
     if "feat" not in title and len(artists_list) > 0 and feat_artists != "":
         new_title = f"{title} (feat. {feat_artists})"
-        # print("feat not in title")
+        print("feat not in title")
     elif "(feat." in title and len(artists_list) > 0 and feat_artists != "":
         new_title = re.sub(r'\(feat\..*', f"(feat. {feat_artists})", title)
-        # print("(feat in title")
+        print("(feat in title")
     elif "feat." in title and len(artists_list) > 0 and feat_artists != "":
         new_title = re.sub(r'\feat\..*', f"(feat. {feat_artists})", title)
-        # print("feat. in title")
+        print("feat. in title")
     else:
         new_title = title
       
