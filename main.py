@@ -16,7 +16,7 @@ def manage_folder_tags(folder_path):
     for root, dirs, files in os.walk(folder_path):
         for file in files:
             #if file is an mp3 file and was created more than 24 hours ago
-            if file.endswith('.mp3') and os.path.getctime(os.path.join(root, file)) <= (time.time() - 86400):
+            if file.endswith('.mp3') and time.time() - os.path.getctime(os.path.join(root, file)) > 86400:
                 file_path = os.path.join(root, file)
                 print(f"Found MP3 file: {file_path}")
                 manage_tags(file_path)
@@ -118,7 +118,7 @@ def manage_tags(file_path):
 
             
     
-    producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore", "Ddusi", "ilovethisbeat", "Wairaki"]
+    producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore", "Ddusi", "ilovethisbeat", "Wairaki", "Pherro"]
 
     # Create a string with the list of featured artists, excluding double artists
     feat_artists = ' & '.join([item for item in artists_list if item not in producers])
@@ -141,6 +141,8 @@ def manage_tags(file_path):
     print(f"featured : {feat_artists}")
     print()
     
+
+    
     print("EDITED TAGS")
     
     # TITLE
@@ -148,6 +150,8 @@ def manage_tags(file_path):
     
     
     title = title[0]
+
+    
     if "feat" not in title and len(artists_list) > 0 and feat_artists != "":
         new_title = f"{title} (feat. {feat_artists})"
         print("feat not in title")
