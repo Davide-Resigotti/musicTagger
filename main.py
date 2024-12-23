@@ -1,4 +1,5 @@
 import time
+import time
 from mutagen.id3 import ID3, TIT2, TPE1, TALB, TPE2, TXXX, TRCK, USLT, TCOM
 import re
 import os
@@ -95,6 +96,7 @@ def manage_tags(file_path):
         
 
 
+
     else:
         if isinstance(artist, list):
             principal_artist = artist[0]
@@ -141,6 +143,8 @@ def manage_tags(file_path):
     print()
     print(f"featured : {feat_artists}")
     print()
+    
+
     
 
     
@@ -286,6 +290,8 @@ def print_lyrics(file_path):
 
     except Exception as e:
         print(f"Errore nel caricamento del file: {e}")
+        
+
         
 
 
