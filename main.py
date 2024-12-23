@@ -1,3 +1,4 @@
+import time
 from mutagen.id3 import ID3, TIT2, TPE1, TALB, TPE2, TXXX, TRCK, USLT, TCOM
 import re
 import os
@@ -14,10 +15,14 @@ def manage_folder_tags(folder_path):
         return
     for root, dirs, files in os.walk(folder_path):
         for file in files:
+            # if file is an mp3 file and was created less than 24 hours ago
+            # if file.endswith('.mp3') and time.time() - os.path.getctime(os.path.join(root, file)) < 86400 :
             if file.endswith('.mp3'):
                 file_path = os.path.join(root, file)
                 print(f"Found MP3 file: {file_path}")
                 manage_tags(file_path)
+            # else:
+            #     print(f"File {file} is not an MP3 file or was created more than 24 hours ago.")
 
 def manage_tags(file_path):
     
@@ -88,7 +93,7 @@ def manage_tags(file_path):
         
         artists_list = ', '.join(artists).split(', ')
         
-        print(artists)
+
 
     else:
         if isinstance(artist, list):
@@ -114,7 +119,7 @@ def manage_tags(file_path):
 
             
     
-    producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore", "Ddusi", "ilovethisbeat", "Wairaki"]
+    producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore", "Ddusi", "ilovethisbeat", "Wairaki", "Pherro", "Eiemgei", "Fallen", "tarantinothe3rd", "Simo Fre", "Ksub", "Brama", "4997", "85Prod", "Uanay", "Kadesh", "TroppoAvanti", "Nablito", "Ed Mars", "Niiut", "idua", "N'Dreamer" ]
 
     # Create a string with the list of featured artists, excluding double artists
     feat_artists = ' & '.join([item for item in artists_list if item not in producers])
@@ -137,6 +142,8 @@ def manage_tags(file_path):
     print(f"featured : {feat_artists}")
     print()
     
+
+    
     print("EDITED TAGS")
     
     # TITLE
@@ -144,15 +151,28 @@ def manage_tags(file_path):
     
     
     title = title[0]
+    
+    
+    
+    
+    
+    title = re.sub(r'\(feat\..*?\)', "", title, flags=re.IGNORECASE).strip()
+
+    
+    
+    
+    
+    
+    
     if "feat" not in title and len(artists_list) > 0 and feat_artists != "":
         new_title = f"{title} (feat. {feat_artists})"
-        print("feat not in title")
+        # print("feat not in title")
     elif "(feat." in title and len(artists_list) > 0 and feat_artists != "":
         new_title = re.sub(r'\(feat\..*', f"(feat. {feat_artists})", title)
-        print("(feat in title")
+        # print("(feat in title")
     elif "feat." in title and len(artists_list) > 0 and feat_artists != "":
         new_title = re.sub(r'\feat\..*', f"(feat. {feat_artists})", title)
-        print("feat. in title")
+        # print("feat. in title")
     else:
         new_title = title
       
@@ -216,15 +236,11 @@ def manage_tags(file_path):
 
     # DOWNLOAD lyrics
     
-    # check if the lyrics are already in the file
-    firts_lyrics = audio.getall('USLT')[0].text if audio.getall('USLT') else None
-    
-    
+    # replace lyrics
+    audio.delall('USLT')
     lyrics = lrcGet.get_lyrics(principal_artist, new_title, album[0], duration)
+    audio['USLT'] = USLT(encoding=3, text=lyrics)
     
-    if lyrics is not None:
-        if firts_lyrics != lyrics:
-            audio['USLT'] = USLT(encoding=3, text=lyrics)
 
 
 
@@ -274,10 +290,11 @@ def print_lyrics(file_path):
 
 
 
+
 if __name__ == "__main__":
-    folder_path = '/Users/davideresigotti/Downloads'
-  
+    folder_path = "/Users/davideresigotti/Music/New Music/Tony Boy/Non C'è Futuro"
     manage_folder_tags(folder_path)
+    
     # print_tags('/Users/davideresigotti/Downloads/DANIEL.mp3')
-    # print_lyrics('/Users/davideresigotti/Downloads/SadTurs & KIID.mp3')
+    # print_lyrics('/Users/davideresigotti/Music/New Music/ASTRO/ASTRO/1 MOMENTO (feat. ANNA).mp3')
 

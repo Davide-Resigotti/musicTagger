@@ -16,7 +16,7 @@ def get_lyrics(artist, title, album, duration):
         res.raise_for_status()
         # print(res.json()["syncedLyrics"])
         print(f"{title} => Lyrics found")
-        return res.json()["syncedLyrics"]
+        return res.json()["plainLyrics"]
     except requests.exceptions.HTTPError:
         
         try:
@@ -30,12 +30,25 @@ def get_lyrics(artist, title, album, duration):
             res.raise_for_status()
             # print(res.json()["syncedLyrics"])
             print(f"{title} => Lyrics found")
-            return res.json()["syncedLyrics"]
+            return res.json()["plainLyrics"]
         except requests.exceptions.HTTPError:
             
-        
-            print(f"{title} => Lyrics NOT found")
-            return None
+            try:
+                # Try fetching lrc-lib with title without feat
+                
+                res = requests.get(lrc_lib, params={'artist_name': artist,
+                                                    'track_name': title,
+                                                    'album_name': album,
+                                                    'duration': duration})
+                res.raise_for_status()
+                # print(res.json()["syncedLyrics"])
+                print(f"{title} => Lyrics found")
+                return res.json()["syncedLyrics"]
+            except requests.exceptions.HTTPError:   
+            
+            
+                print(f"{title} => Lyrics NOT found")
+                return None
         
 
 # if __name__ == "__main__":
