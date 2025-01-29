@@ -17,8 +17,8 @@ def manage_folder_tags(folder_path):
     for root, dirs, files in os.walk(folder_path):
         for file in files:
             # if file is an mp3 file and was created less than 24 hours ago
-            # if file.endswith('.mp3') and time.time() - os.path.getctime(os.path.join(root, file)) < 86400 :
-            if file.endswith('.mp3'):
+            if file.endswith('.mp3') and time.time() - os.path.getctime(os.path.join(root, file)) < 86400 :
+            # if file.endswith('.mp3'):
                 file_path = os.path.join(root, file)
                 print(f"Found MP3 file: {file_path}")
                 manage_tags(file_path)
@@ -121,7 +121,7 @@ def manage_tags(file_path):
 
             
     
-    producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore", "Ddusi", "ilovethisbeat", "Wairaki", "Pherro", "Eiemgei", "Fallen", "tarantinothe3rd", "Simo Fre", "Ksub", "Brama", "4997", "85Prod", "Uanay", "Kadesh", "TroppoAvanti", "Nablito", "Ed Mars", "Niiut", "idua", "N'Dreamer" ]
+    producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore", "Ddusi", "ilovethisbeat", "Wairaki", "Pherro", "Eiemgei", "Fallen", "tarantinothe3rd", "Simo Fre", "Ksub", "Brama", "4997", "85Prod", "Uanay", "Kadesh", "TroppoAvanti", "Nablito", "Ed Mars", "Niiut", "idua", "N'Dreamer", "NARDI", "Finesse"]
 
     # Create a string with the list of featured artists, excluding double artists
     feat_artists = ' & '.join([item for item in artists_list if item not in producers])
@@ -156,17 +156,10 @@ def manage_tags(file_path):
     
     title = title[0]
     
-    
-    
-    
+
     
     title = re.sub(r'\(feat\..*?\)', "", title, flags=re.IGNORECASE).strip()
 
-    
-    
-    
-    
-    
     
     if "feat" not in title and len(artists_list) > 0 and feat_artists != "":
         new_title = f"{title} (feat. {feat_artists})"
@@ -298,7 +291,7 @@ def print_lyrics(file_path):
 
 
 if __name__ == "__main__":
-    folder_path = "/Users/davideresigotti/Music/New Music/Tony Boy/Non C'è Futuro"
+    folder_path = "/Users/davideresigotti/Music/New Music"
     manage_folder_tags(folder_path)
     
     # print_tags('/Users/davideresigotti/Downloads/DANIEL.mp3')

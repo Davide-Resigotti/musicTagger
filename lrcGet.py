@@ -16,7 +16,7 @@ def get_lyrics(artist, title, album, duration):
         res.raise_for_status()
         # print(res.json()["syncedLyrics"])
         print(f"{title} => Lyrics found")
-        return res.json()["plainLyrics"]
+        return res.json()["syncedLyrics"] 
     except requests.exceptions.HTTPError:
         
         try:
@@ -30,7 +30,7 @@ def get_lyrics(artist, title, album, duration):
             res.raise_for_status()
             # print(res.json()["syncedLyrics"])
             print(f"{title} => Lyrics found")
-            return res.json()["plainLyrics"]
+            return res.json()["syncedLyrics"]
         except requests.exceptions.HTTPError:
             
             try:
@@ -43,7 +43,7 @@ def get_lyrics(artist, title, album, duration):
                 res.raise_for_status()
                 # print(res.json()["syncedLyrics"])
                 print(f"{title} => Lyrics found")
-                return res.json()["syncedLyrics"]
+                return res.json()["plainLyrics"]
             except requests.exceptions.HTTPError:   
             
             
