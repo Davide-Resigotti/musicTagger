@@ -14,4 +14,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # 6. Imposta il comando per avviare il programma
-CMD ["python", "main.py"]
+# -u per disabilitare il buffering dell'output
+CMD ["python", "-u", "main.py"]   

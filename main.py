@@ -275,7 +275,7 @@ def manage_tags(file_path):
         print() 
         
         
-        # audio['TMOO'] = TMOO(encoding=3, text="DONE")
+        audio['TMOO'] = TMOO(encoding=3, text="DONE")
             
         audio.save() 
         
