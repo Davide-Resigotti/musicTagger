@@ -40,7 +40,7 @@ def manage_folder_tags(folder_path):
         for file in files:
             if file.endswith('.mp3'):
                 file_path = os.path.join(root, file)
-                print(f"Found MP3 file: {file_path}")
+                # print(f"Found MP3 file: {file_path}")
                 manage_tags(file_path)
 
 def manage_tags(file_path):
@@ -50,7 +50,7 @@ def manage_tags(file_path):
     # ------------------- GET TAGS -------------------
     
     mood = audio.get('TMOO', [None])
-    print(mood)
+
     
     if mood != "DONE":
     
@@ -148,7 +148,35 @@ def manage_tags(file_path):
 
                 
         
-        producers = ["SadTurs", "KIID", "Ava", "CoCo", "Peppe Amore", "Ddusi", "ilovethisbeat", "Wairaki", "Pherro", "Eiemgei", "Fallen", "tarantinothe3rd", "Simo Fre", "Ksub", "Brama", "4997", "85Prod", "Uanay", "Kadesh", "TroppoAvanti", "Nablito", "Ed Mars", "Niiut", "idua", "N'Dreamer", "NARDI", "Finesse"]
+        producers = ["SadTurs", 
+                     "KIID", 
+                     "Ava", 
+                     "CoCo", 
+                     "Peppe Amore", 
+                     "Ddusi", 
+                     "ilovethisbeat", 
+                     "Wairaki", 
+                     "Pherro", 
+                     "Eiemgei", 
+                     "Fallen", 
+                     "tarantinothe3rd", 
+                     "Simo Fre", 
+                     "Ksub", 
+                     "Brama", 
+                     "4997", 
+                     "85Prod", 
+                     "Uanay", 
+                     "Kadesh", 
+                     "TroppoAvanti", 
+                     "Nablito", 
+                     "Ed Mars", 
+                     "Niiut", 
+                     "idua", 
+                     "N'Dreamer", 
+                     "NARDI", 
+                     "Finesse", 
+                     "Nko",
+                     "333 Mob"]
 
         # Create a string with the list of featured artists, excluding double artists
         feat_artists = ' & '.join([item for item in artists_list if item not in producers])
@@ -166,28 +194,22 @@ def manage_tags(file_path):
             
 
         
-        
         print()
         print(f"featured : {feat_artists}")
         print()
         
-
-        
-
         
         print("EDITED TAGS")
         
         # TITLE
         # Check if feat artists are set, if not set it to the list of featured artists
         
-        
         title = title[0]
-        
 
         
         title = re.sub(r'\(feat\..*?\)', "", title, flags=re.IGNORECASE).strip()
-
         
+  
         if "feat" not in title and len(artists_list) > 0 and feat_artists != "":
             new_title = f"{title} (feat. {feat_artists})"
             # print("feat not in title")
@@ -200,23 +222,17 @@ def manage_tags(file_path):
         else:
             new_title = title
         
-            
-            
-            
-        
-            
+               
         # Remove the (prod. ...) and (official video) from the title
         new_title = re.sub(r'\(prod\..*?\)|\(official video\)', "", new_title, flags=re.IGNORECASE).strip()
         
         # Remove all (feat. ...) from the new title
         # new_title = re.sub(r'\(feat\..*?\)', "", new_title, flags=re.IGNORECASE).strip()
 
-
-
         # Update the title tag
-        if title != new_title:
-            audio['TIT2'] = TIT2(encoding=3, text=new_title)
-            print(f"Titolo aggiornato: {new_title}")
+        #if title != new_title: removed because do not update when remove (feat.)
+        audio['TIT2'] = TIT2(encoding=3, text=new_title)
+        print(f"Titolo aggiornato: {new_title}")
         
         #ARTIST
         # Check if artist is set, if not set it to the principal artist
@@ -323,7 +339,7 @@ def manage_tags(file_path):
 
 
 if __name__ == "__main__":
-    folder_to_watch = "/Users/davideresigotti/Downloads"
+    folder_to_watch = "/Users/davideresigotti/Music/Music/Media.localized/Music"
     manage_folder_tags(folder_to_watch)
     # w = Watcher(folder_to_watch)
     # w.run()
